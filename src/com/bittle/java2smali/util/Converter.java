@@ -1,8 +1,5 @@
 package com.bittle.java2smali.util;
 
-import com.bittle.java2smali.util.File;
-import com.bittle.java2smali.util.Log;
-import com.bittle.java2smali.util.Terminal;
 import org.jf.baksmali.Baksmali;
 import org.jf.baksmali.BaksmaliOptions;
 import org.jf.dexlib2.DexFileFactory;
@@ -60,6 +57,23 @@ public class Converter {
 
         return dexFile;
     }
+
+    public static File jarToSmali(String jarDir) {
+        File dex = jarToDex(jarDir);
+        if (dex != null) {
+            File smaliDir = dexToSmali(dex.getAbsolutePath(), dex.getParent());
+            if (smaliDir != null) {
+                return smaliDir;
+            } else {
+                Log.error("Couldn\'t dex to smali");
+                return null;
+            }
+        } else {
+            Log.error("Couldn\'t jar to dex");
+            return null;
+        }
+    }
+    public static File jarToDex(String jarDir){ return classToDex(jarDir);}
 
     public static File dexToSmali(String dexFile, String outputDir) {
         try {
