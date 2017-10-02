@@ -1,4 +1,4 @@
-package com.bittle.java2smali.Converters;
+package com.bittle.java2smali.util;
 
 import com.bittle.java2smali.util.File;
 import com.bittle.java2smali.util.Log;
