@@ -1,7 +1,9 @@
 package com.bittle.java2smali;
 
-import com.bittle.java2smali.Converters.Converter;
-import com.bittle.java2smali.util.File;
+import com.bittle.java2smali.util.Converter;
+import com.bittle.java2smali.util.files.File;
+import com.bittle.java2smali.util.files.JavaClassFile;
+import com.bittle.java2smali.util.files.JavaFile;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -20,9 +22,14 @@ public class Main extends Application {
 
         */
 
-        String java_file = "/Users/oscartorres/IdeaProjects/Java2Smali/temp/Definition.java";
-        File file = Converter.javaToSmali(java_file);
+        String f1 = "/Users/oscartorres/AndroidStudioProjects/Virtuous/app/build/intermediates/classes/release/com/bittle/virtuous/dialogs/AddPlaylistDialog.class";
+        String f2 = "/Users/oscartorres/AndroidStudioProjects/ColorPicker/app/build/intermediates/classes/release/com/getbase/floatingactionbutton/AddFloatingActionButton\\$1.class";
+        String f3 = "/Users/oscartorres/IdeaProjects/test/src/File.java";
+        String f4 = "/Users/oscartorres/IdeaProjects/test/out/production/test/MainClass.class";
 
+        File file = Converter.javaToSmali(f3);
+        if (file != null)
+            System.out.println(file.getText());
     }
 
     public static void main(String[] args) {
