@@ -1,5 +1,7 @@
 package com.bittle.java2smali.util;
 
+import com.bittle.java2smali.util.files.File;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -27,7 +29,7 @@ public class Terminal {
             }
         }
         else{
-            Log.error("File " + input + " doesn\'t exist.");
+            Log.error("files " + input + " doesn\'t exist.");
             return null;
         }
     }
