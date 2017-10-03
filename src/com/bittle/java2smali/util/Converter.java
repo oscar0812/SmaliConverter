@@ -11,41 +11,32 @@ import org.jf.dexlib2.dexbacked.DexBackedDexFile;
 public class Converter {
 
     public static File javaToSmali(String input) {
+        /* Steps:
+            1) .java -> .class
+            2) .class -> .dex
+            3) .dex -> .smali
+         */
         JavaFile javaFile = new JavaFile(input);
-        File class_file = javaToClass(input);
-
-        if (class_file != null) {
-            File dex_file = classToDex(class_file.getAbsolutePath());
-
-            if (dex_file != null) {
-                File smali_dir = dexToSmali(dex_file.getAbsolutePath(), dex_file.getParent());
-
-                if (smali_dir != null) {
-                    // all successful once u reach here, so delete dex and class
-                    class_file.delete();
-                    dex_file.delete();
-
-                    return findSmali(javaFile, smali_dir);
-
-                } else {
-                    Log.error("Couldn\'t dex to smali");
-                    return null;
-                }
+        // shortcut
+        File dexFile = javaToDex(input);
+        if (dexFile != null) {
+            File smaliDir = dexToSmali(dexFile.getAbsolutePath(), dexFile.getParent());
+            if (smaliDir != null) {
+                return findSmali(javaFile, smaliDir);
             } else {
-                Log.error("Couldn\'t class to dex");
+                Log.error("Couldn\'t dex to smali");
                 return null;
             }
         } else {
-            Log.error("Couldn\'t compile java file");
             return null;
         }
     }
 
     // we need to find the smali once its out of dex,
     // use the java packaging to find it
-    private static File findSmali(JavaFile javaFile, File smali_dir) {
+    private static File findSmali(JavaFile javaFile, File smaliDir) {
         // append the package to the directory
-        File s = smali_dir.appendFile(javaFile.getPackagePath() +
+        File s = smaliDir.appendFile(javaFile.getPackagePath() +
                 javaFile.changeExtension("smali").getName());
 
         if (s.exists())
