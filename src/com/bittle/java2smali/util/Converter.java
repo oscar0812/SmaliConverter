@@ -1,5 +1,7 @@
 package com.bittle.java2smali.util;
 
+import com.bittle.java2smali.util.files.File;
+import com.bittle.java2smali.util.files.JavaFile;
 import org.jf.baksmali.Baksmali;
 import org.jf.baksmali.BaksmaliOptions;
 import org.jf.dexlib2.DexFileFactory;
@@ -9,20 +11,21 @@ import org.jf.dexlib2.dexbacked.DexBackedDexFile;
 public class Converter {
 
     public static File javaToSmali(String input) {
+        JavaFile javaFile = new JavaFile(input);
         File class_file = javaToClass(input);
 
         if (class_file != null) {
             File dex_file = classToDex(class_file.getAbsolutePath());
 
             if (dex_file != null) {
-                File smali_file = dexToSmali(dex_file.getAbsolutePath(), dex_file.getParent());
+                File smali_dir = dexToSmali(dex_file.getAbsolutePath(), dex_file.getParent());
 
-                if (smali_file != null) {
+                if (smali_dir != null) {
                     // all successful once u reach here, so delete dex and class
                     class_file.delete();
                     dex_file.delete();
 
-                    return smali_file;
+                    return findSmali(javaFile, smali_dir);
 
                 } else {
                     Log.error("Couldn\'t dex to smali");
@@ -34,6 +37,37 @@ public class Converter {
             }
         } else {
             Log.error("Couldn\'t compile java file");
+            return null;
+        }
+    }
+
+    // we need to find the smali once its out of dex,
+    // use the java packaging to find it
+    private static File findSmali(JavaFile javaFile, File smali_dir) {
+        // append the package to the directory
+        File s = smali_dir.appendFile(javaFile.getPackagePath() +
+                javaFile.changeExtension("smali").getName());
+
+        if (s.exists())
+            return s;
+        else {
+            Log.error("Couldn\'t find smali file: 2");
+            return null;
+        }
+    }
+
+    public static File javaToDex(String javaDir) {
+        File classFile = javaToClass(javaDir);
+        if (classFile != null) {
+            File dexFile = classToDex(classFile.getAbsolutePath());
+            if (dexFile != null) {
+                return dexFile;
+            } else {
+                Log.error("Couldn\'t class to dex");
+                return null;
+            }
+        } else {
+            Log.error("Couldn\'t java to dex");
             return null;
         }
     }
@@ -73,7 +107,10 @@ public class Converter {
             return null;
         }
     }
-    public static File jarToDex(String jarDir){ return classToDex(jarDir);}
+
+    public static File jarToDex(String jarDir) {
+        return classToDex(jarDir);
+    }
 
     public static File dexToSmali(String dexFile, String outputDir) {
         try {
